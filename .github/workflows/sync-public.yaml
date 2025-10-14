@@ -34,19 +34,12 @@ jobs:
           repositories: |
             trustx-ootb-custom-pages
 
-      - name: Debug token scope
+      - name: Push to public repo
         env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+            GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
-          echo "Token: $GH_TOKEN"
-          curl -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/daoninc/trustx-ootb-custom-pages
+          git config --global user.name "daon-ci-bot"
+          git config --global user.email "daon-ci-bot@daon.com"
 
-      # - name: Push to public repo
-      #   env:
-      #       GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-      #   run: |
-      #     git config --global user.name "daon-ci-bot"
-      #     git config --global user.email "daon-ci-bot@daon.com"
-
-      #     git remote add public https://x-access-token:${GH_TOKEN}@github.com/daoninc/trustx-ootb-custom-pages.git
-      #     git push --mirror public
+          git remote add public https://x-access-token:${GH_TOKEN}@github.com/daoninc/trustx-ootb-custom-pages.git
+          git push --mirror public
