@@ -19,11 +19,6 @@ jobs:
 
 
     steps:
-      - name: Checkout private repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # needed for full history
-
       - name: Generate GitHub App token
         id: generate_token
         uses: actions/create-github-app-token@v2
@@ -34,9 +29,13 @@ jobs:
           repositories: |
             trustx-ootb-custom-pages
 
+      - name: Checkout private repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          fetch-depth: 0  # needed for full history
+
       - name: Push to public repo
-        env:
-            GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           gh auth login --with-token <<<"$GITHUB_TOKEN"
           gh repo clone daoninc/trustx-ootb-custom-pages
