@@ -27,7 +27,7 @@ jobs:
           private-key: ${{ secrets.SYNC_TO_PUBLIC_PRIVATE_KEY }}
           owner: daoninc
           repositories: |
-            trustx-ootb-custom-pages
+            trustx-ootb-custom-pages-public
 
       - name: Checkout private repo
         uses: actions/checkout@v4
