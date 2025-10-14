@@ -40,6 +40,8 @@ jobs:
         run: |
           git config --global user.name "daon-ci-bot"
           git config --global user.email "daon-ci-bot@daon.com"
-
+          git config --global credential.helper ""
+          git remote remove public || true
           git remote add public https://x-access-token:${GH_TOKEN}@github.com/daoninc/trustx-ootb-custom-pages.git
+          git remote -v
           git push --mirror public
