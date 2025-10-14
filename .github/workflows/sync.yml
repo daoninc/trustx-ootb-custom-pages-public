@@ -1,0 +1,76 @@
+name: s3-sync
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - dev
+    - qc
+    - qc2
+    - stg
+    - preview
+    - main
+
+env:
+  AWS_ROLE_TO_ASSUME: arn:aws:iam::588222401269:role/sky-dev-trustx-ootb-custom-pages
+  AWS_ROLE_SESSION_NAME: EngineeringAwsActions-skyscraper-trustx-ootb-custom-pages
+
+jobs:
+  build-and-deploy-lambda-stack:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required to use OIDC authentication
+      contents: read
+
+    steps:
+
+    - name: Checkout this repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set variables for dev branch
+      if: ${{ github.ref == 'refs/heads/dev' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Set variables for qc branch
+      if: ${{ github.ref == 'refs/heads/qc' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Set variables for qc2 branch
+      if: ${{ github.ref == 'refs/heads/qc2' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Set variables for stg branch
+      if: ${{ github.ref == 'refs/heads/stg' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Configuration for preview branch
+      if: ${{ github.ref == 'refs/heads/preview' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Configuration for main branch
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+
+    - name: Configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+        role-duration-seconds: 900 # the ttl of the session, in seconds.
+        role-session-name: ${{ env.AWS_ROLE_SESSION_NAME }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: s3 sync
+      run: |
+        aws s3 sync ./trustXOOTBCustomPages s3://sky-dev-oak-trustwebdata-eu-west-1/trustXOOTBCustomPages
+
+    - name: Invalidate cloud front cache
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${{ env.CF_DISTRIBUTION_ID }} --paths /trustXOOTBCustomPages/*
