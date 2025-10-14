@@ -15,7 +15,7 @@ env:
   AWS_ROLE_SESSION_NAME: EngineeringAwsActions-skyscraper-trustx-ootb-custom-pages
 
 jobs:
-  build-and-deploy-lambda-stack:
+  build-and-deploy-ootb-custom-pages:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # required to use OIDC authentication
@@ -90,7 +90,7 @@ jobs:
 
     - name: s3 sync Oak
       run: |
-        aws s3 sync ./trustXOOTBCustomPages/* s3://${TRUSTWEBDATA_BUCKET_NAME}/trustXOOTBCustomPages/*
+        aws s3 sync ./trustXOOTBCustomPages s3://${TRUSTWEBDATA_BUCKET_NAME}/trustXOOTBCustomPages
 
     - name: Invalidate cloud front cache Oak
       run: |
@@ -99,7 +99,7 @@ jobs:
     - name: s3 sync Fir
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |
-        aws s3 sync ./trustXOOTBCustomPages/* s3://sky-prod-fir-trustwebdata-us-east-1/trustXOOTBCustomPages/*
+        aws s3 sync ./trustXOOTBCustomPages s3://sky-prod-fir-trustwebdata-us-east-1/trustXOOTBCustomPages
 
     - name: Invalidate cloud front cache Fir
       if: ${{ github.ref == 'refs/heads/main' }}
@@ -109,7 +109,7 @@ jobs:
     - name: s3 sync Gum
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |
-        aws s3 sync ./trustXOOTBCustomPages/* s3://sky-prod-gum-trustwebdata-ap-southeast-2/trustXOOTBCustomPages/*
+        aws s3 sync ./trustXOOTBCustomPages s3://sky-prod-gum-trustwebdata-ap-southeast-2/trustXOOTBCustomPages
 
     - name: Invalidate cloud front cache Gum
       if: ${{ github.ref == 'refs/heads/main' }}
