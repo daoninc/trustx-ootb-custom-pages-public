@@ -40,8 +40,8 @@ jobs:
           git config --global user.name "daon-ci-bot"
           cd ..
           pwd
-          git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoninc/trustx-ootb-custom-pages.git
-          rsync -av ./trustx-ootb-custom-pages ./trustx-ootb-custom-pages-public/
+          git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoninc/trustx-ootb-custom-pages-public.git
+          rsync -av ./trustx-ootb-custom-pages/ ./trustx-ootb-custom-pages-public/
           cd trustx-ootb-custom-pages-public
           git add -A
           git diff-index --quiet HEAD || git commit -m "sync from private repo"
