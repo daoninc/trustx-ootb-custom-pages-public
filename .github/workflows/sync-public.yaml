@@ -38,7 +38,7 @@ jobs:
         run: |
           git config --global user.email "daon-ci-bot@daon.com"
           git config --global user.name "daon-ci-bot"
-          git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoinc/trustx-ootb-custom-pages.git
+          git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoninc/trustx-ootb-custom-pages.git
           cd trustx-ootb-custom-pages
           git remote add trustx-ootb-custom-pages https://daon-private:${{ steps.generate_token.outputs.token }}@github.com/daon-private/trustx-ootb-custom-pages.git
           git remote update
