@@ -1,14 +1,14 @@
 name: Sync to Public Repo
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  # workflow_run:
-  #   workflows: 
-  #     - "s3-sync"
-  #   types:
-  #     - completed
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: 
+      - "s3-sync"
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
