@@ -12,7 +12,6 @@ on:
     - main
 
 env:
-  AWS_ROLE_TO_ASSUME: arn:aws:iam::588222401269:role/sky-dev-trustx-ootb-custom-pages
   AWS_ROLE_SESSION_NAME: EngineeringAwsActions-skyscraper-trustx-ootb-custom-pages
 
 jobs:
@@ -32,32 +31,50 @@ jobs:
     - name: Set variables for dev branch
       if: ${{ github.ref == 'refs/heads/dev' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E3BLJRAJVZKJWB" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::588222401269:role/sky-dev-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-dev-oak-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Set variables for qc branch
       if: ${{ github.ref == 'refs/heads/qc' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E1V4OC2G1970IC" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::588222401269:role/sky-dev-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-qc-oak-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Set variables for qc2 branch
       if: ${{ github.ref == 'refs/heads/qc2' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E3DJVTITQABHQD" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::588222401269:role/sky-dev-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-qc2-oak-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Set variables for stg branch
       if: ${{ github.ref == 'refs/heads/stg' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E3V0DB0S6LPF9Y" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::051481732423:role/sky-stg-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-stg-oak-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Configuration for preview branch
       if: ${{ github.ref == 'refs/heads/preview' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E3DBYH8A3L2ST6" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::890373272564:role/sky-prod-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-prod-preview-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Configuration for main branch
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |
-        echo "CF_DISTRIBUTION_ID=???" >> $GITHUB_ENV
+        echo "CF_DISTRIBUTION_ID=E3BUPH2R549S1C" >> $GITHUB_ENV
+        echo "AWS_ROLE_TO_ASSUME=arn:aws:iam::890373272564:role/sky-prod-trustx-ootb-custom-pages" >> $GITHUB_ENV
+        echo "TRUSTWEBDATA_BUCKET_NAME=sky-prod-oak-trustwebdata-eu-west-1" >> $GITHUB_ENV
+        echo "AWS_REGION=eu-west-1" >> $GITHUB_ENV
 
     - name: Configure aws credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -67,10 +84,34 @@ jobs:
         role-session-name: ${{ env.AWS_ROLE_SESSION_NAME }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: s3 sync
-      run: |
-        aws s3 sync ./trustXOOTBCustomPages s3://sky-dev-oak-trustwebdata-eu-west-1/trustXOOTBCustomPages
+##@RODRIGO PUT BUILD HERE
 
-    - name: Invalidate cloud front cache
+##@RODRIGO END BUILD HERE
+
+    - name: s3 sync Oak
+      run: |
+        aws s3 sync ./trustXOOTBCustomPages/* s3://${TRUSTWEBDATA_BUCKET_NAME}/trustXOOTBCustomPages/*
+
+    - name: Invalidate cloud front cache Oak
       run: |
         aws cloudfront create-invalidation --distribution-id ${{ env.CF_DISTRIBUTION_ID }} --paths /trustXOOTBCustomPages/*
+
+    - name: s3 sync Fir
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        aws s3 sync ./trustXOOTBCustomPages/* s3://sky-prod-fir-trustwebdata-us-east-1/trustXOOTBCustomPages/*
+
+    - name: Invalidate cloud front cache Fir
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        aws cloudfront create-invalidation --distribution-id E1UBEN1K5ENKW8 --paths /trustXOOTBCustomPages/*
+
+    - name: s3 sync Gum
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        aws s3 sync ./trustXOOTBCustomPages/* s3://sky-prod-gum-trustwebdata-ap-southeast-2/trustXOOTBCustomPages/*
+
+    - name: Invalidate cloud front cache Gum
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        aws cloudfront create-invalidation --distribution-id E3SNFTQ4PU6LIQ --paths /trustXOOTBCustomPages/*
