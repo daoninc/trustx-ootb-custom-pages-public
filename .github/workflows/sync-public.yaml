@@ -36,12 +36,12 @@ jobs:
 
       - name: Push to public repo
         env:
-            GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+            GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
-          git config --global user.name "daon-ci-bot"
-          git config --global user.email "daon-ci-bot@daon.com"
-          git config --global credential.helper ""
-          git remote -v
-          git push https://x-access-token:${GH_TOKEN}@github.com/daoninc/trustx-ootb-custom-pages.git --mirror
+          gh auth login --with-token <<<"$GITHUB_TOKEN"
+          gh repo clone daoninc/trustx-ootb-custom-pages
+          cd trustx-ootb-custom-pages
+          git remote add upstream https://github.com/daon-private/trustx-ootb-custom-pages.git
+          gh repo sync daoninc/trustx-ootb-custom-pages --source upstream --branch main
 
 
