@@ -38,9 +38,13 @@ jobs:
         run: |
           git config --global user.email "daon-ci-bot@daon.com"
           git config --global user.name "daon-ci-bot"
+          cd ..
+          pwd
           git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoninc/trustx-ootb-custom-pages.git
-          rsync -av --exclude=trustx-ootb-custom-pages ./ ./trustx-ootb-custom-pages/
-          cd trustx-ootb-custom-pages
-          git push origin main
+          rsync -av ./trustx-ootb-custom-pages ./trustx-ootb-custom-pages-public/
+          cd trustx-ootb-custom-pages-public
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "sync from private repo"
+          git push
 
 
