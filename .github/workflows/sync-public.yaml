@@ -32,12 +32,13 @@ jobs:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
+          github-server-url: 'https://x-access-token:${{ steps.generate_token.outputs.token }}@github.com/daon-private/trustx-ootb-custom-pages.git'
           token: ${{ steps.generate_token.outputs.token }}
           fetch-depth: 0  # needed for full history
 
       - name: Push to public repo
         run: |
-          gh auth login --with-token <<<"$GITHUB_TOKEN"
+          gh auth login --with-token <<<${{ steps.generate_token.outputs.token }}
           gh repo clone daoninc/trustx-ootb-custom-pages
           cd trustx-ootb-custom-pages
           git remote add upstream https://github.com/daon-private/trustx-ootb-custom-pages.git
