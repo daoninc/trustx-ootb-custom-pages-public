@@ -2,8 +2,6 @@ name: Sync to Public Repo
 
 on:
   push:
-    branches:
-      - main
   workflow_run:
     workflows: 
       - "s3-sync"
@@ -35,6 +33,7 @@ jobs:
           fetch-depth: 0  # needed for full history
 
       - name: Push to public repo
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           git config --global user.email "daon-ci-bot@daon.com"
           git config --global user.name "daon-ci-bot"
