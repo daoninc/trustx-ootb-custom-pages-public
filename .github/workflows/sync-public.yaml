@@ -1,7 +1,6 @@
 name: Sync to Public Repo
 
 on:
-  push:
   workflow_run:
     workflows: 
       - "s3-sync"
@@ -37,4 +36,5 @@ jobs:
           git config --global user.name "daon-gh-automation-bot"
           git config --global user.email "gh-automation-bot@daon.com"
           git remote add public https://x-access-token:${{ secrets.GH_AUTOMATION_BOT_PAT }}@github.com/daoninc/trustx-ootb-custom-pages-public.git
-          git push public main --force
+          #git push public main --force
+          git push public HEAD:refs/heads/main --force
