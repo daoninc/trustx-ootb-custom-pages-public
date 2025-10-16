@@ -17,33 +17,24 @@ jobs:
 
 
     steps:
-      - name: Generate GitHub App token
-        id: generate_token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.SYNC_TO_PUBLIC_APP_ID }}
-          private-key: ${{ secrets.SYNC_TO_PUBLIC_PRIVATE_KEY }}
-          owner: daoninc
-          repositories: |
-            trustx-ootb-custom-pages-public
-
-      - name: Checkout private repo
+      - name: Checkout the private repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # needed for full history
+          token: ${{ secrets.GH_AUTOMATION_BOT_PAT }}
+          # path: trustx-ootb-custom-pages
+
+      # - name: Checkout the public repo
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0  # needed for full history
+      #     repository: daoninc/trustx-ootb-custom-pages-public
+      #     token: ${{ secrets.GH_AUTOMATION_BOT_PAT }}
+      #     path: trustx-ootb-custom-pages-public
 
       - name: Push to public repo
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          git config --global user.email "daon-ci-bot@daon.com"
-          git config --global user.name "daon-ci-bot"
-          cd ..
-          pwd
-          git clone https://daoninc:${{ steps.generate_token.outputs.token }}@github.com/daoninc/trustx-ootb-custom-pages-public.git
-          rsync -av ./trustx-ootb-custom-pages/ ./trustx-ootb-custom-pages-public/
-          cd trustx-ootb-custom-pages-public
-          git add -A
-          git diff-index --quiet HEAD || git commit -m "sync from private repo"
-          git push
-
-
+        run: |      
+          git config --global user.name "daon-gh-automation-bot"
+          git config --global user.email "gh-automation-bot@daon.com"
+          git remote add public https://x-access-token:${{ secrets.GH_AUTOMATION_BOT_PAT }}@github.com/daoninc/trustx-ootb-custom-pages-public.git
+          git push public main --force
